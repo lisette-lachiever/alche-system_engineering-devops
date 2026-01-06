@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# This script configures Nginx to redirect /redirect_me
+# Configure Nginx to redirect /redirect_me
 
 apt-get update -y
 apt-get install -y nginx
