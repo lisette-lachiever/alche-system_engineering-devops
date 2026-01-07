@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Configureing a 301 redirect for /redirect_me
+
+sudo apt-get update -y
+sudo apt-get install nginx -y
+
+echo 'location = /redirect_me {
+    return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+}' | sudo tee /etc/nginx/snippets/redirect_me.conf
+
+grep -q "redirect_me.conf" /etc/nginx/sites-available/default || \
+sudo sed -i '/server_name _;/a \    include /etc/nginx/snippets/redirect_me.conf;' /etc/nginx/sites-available/default
+
+sudo service nginx restart
