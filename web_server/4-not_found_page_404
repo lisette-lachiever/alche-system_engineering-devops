@@ -1,14 +1,30 @@
 #!/usr/bin/env bash
-# Configureing a 301 redirect for /redirect_me
+# Configures Nginx with a custom 404 page that contains "Ceci n'est pas une page"
+sudo apt update -y
+sudo apt install nginx -y
+echo "Ceci n'est pas une page" > /var/www/html/404.html
+echo "server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
 
-sudo apt-get update -y
-sudo apt-get install nginx -y
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
 
-echo 'location = /redirect_me {
-    return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-}' | sudo tee /etc/nginx/snippets/redirect_me.conf
+        server_name _;
 
-grep -q "redirect_me.conf" /etc/nginx/sites-available/default || \
-sudo sed -i '/server_name _;/a \    include /etc/nginx/snippets/redirect_me.conf;' /etc/nginx/sites-available/default
+        location /redirect_me {
+                return 301 https://github.com/lisette-lachiever;
+        }
 
+        location / {
+                try_files \$uri \$uri/ =404;
+        }
+
+        error_page 404 /404.html;
+
+        location = /404.html {
+                internal;
+        }
+}" > /etc/nginx/sites-available/default
 sudo service nginx restart
+sudo service nginx reload
